@@ -1,15 +1,17 @@
-// TodoList.jsx
 import React from "react";
 import TodoItem from "./TodoItem";
 
 const TodoList = ({ tasks, onDelete, onToggle }) => {
-  if (!tasks || tasks.length === 0) {
+  console.log("TodoList tasks:", tasks);
+  const [taskList, setTaskList] = React.useState(tasks || []);
+  if (taskList.length === 0) {
     return <p>No tasks yet! Add one.</p>;
   }
 
   return (
     <ul style={{ listStyle: "none", padding: 0 }}>
-      {tasks.map((task) => (
+      {taskList.map((task) => (
+        console.log(task),
         <TodoItem
           key={task._id}
           task={task}
