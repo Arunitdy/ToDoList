@@ -35,7 +35,7 @@ const App = () => {
     console.log("Adding task:", text);
     try {
 
-      const res = await axios.post(`${API}/api/tasks`, { title: text });
+      const res = await axios.post(`${API}/api/tasks`, { text });
       setTasks((prev) => [...prev, res.data]);
       console.log("Task added:", res);
     } catch (error) {
