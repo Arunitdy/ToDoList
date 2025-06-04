@@ -11,11 +11,13 @@ const App = () => {
 
   // Fetch all tasks
   const fetchTasks = async () => {
+    console.log("Fetching tasks...");
     try {
       const res = await axios.get("/api/tasks");
       setTasks(res.data);
       console.log("Fetched tasks:", res.data);
     } catch (error) {
+      console.error("Fetch tasks error:", error.response?.data || error.message);
       alert("Failed to fetch tasks");
     } 
   };
@@ -26,9 +28,11 @@ const App = () => {
 
   // Add new task
   const addTask = async (text) => {
+    console.log("Adding task:", text);
     try {
       const res = await axios.post("/api/tasks", { title: text });
       setTasks((prev) => [...prev, res.data]);
+      console.log("Task added:", res);
     } catch (error) {
           console.error("Add task error:", err.response?.data || err.message);
       alert("Failed to add task");
@@ -47,6 +51,7 @@ const App = () => {
 
   // Toggle completed status
   const toggleTask = async (id) => {
+    
     try {
       const task = tasks.find((t) => t._id === id);
       const updated = { ...task, completed: !task.completed };
