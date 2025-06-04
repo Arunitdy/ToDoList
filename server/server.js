@@ -7,9 +7,10 @@ const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(cors());
 app.use(express.json());
-
+app.use(cors({
+  origin: 'https://to-do-list-five-delta-65.vercel.app'|| 'http://localhost:3000', // Adjust the origin as needed
+}));
 // Connect to MongoDB
 const mongoURI = "mongodb+srv://arunmundakkal003:9xbkPqFf7LrfEI3F@cluster0.mfjj2km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
