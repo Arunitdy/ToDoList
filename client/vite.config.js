@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // Proxy API requests to your Render backend in development
       '/api': {
-        target: 'https://todolist-r6j4.onrender.com' || 'http://localhost:5000', // Adjust the target URL as needed
+        target: 'https://todolist-r6j4.onrender.com/' || 'http://localhost:5000', // Adjust the target URL as needed
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
