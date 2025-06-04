@@ -24,7 +24,7 @@ const TodoItem = ({ task, onDelete, onToggle }) => {
           cursor: "pointer"
         }}
       >
-        {taskList.title}
+        {taskList.text}
       </span>
       <button onClick={() => onDelete(taskList._id)}>❌</button>
     </li>
