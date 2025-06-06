@@ -5,7 +5,9 @@ import TodoList from "../components/TodoList";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 
-const API = import.meta.env.VITE_API_BASE_URL ||'http://localhost:5000';
+// Make sure your .env file has VITE_API_BASE_URL like:
+// VITE_API_BASE_URL=http://localhost:5000/api
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -14,7 +16,7 @@ const Dashboard = () => {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(`${API}/tasks`, {
-        headers: { Authorization: `Bearer ${user?.token}` }
+        headers: { Authorization: `Bearer ${user?.token}` },
       });
       setTasks(res.data);
     } catch (err) {
@@ -23,15 +25,21 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (user?.token) {
+      fetchTasks();
+    }
+  }, [user?.token]);
 
   const addTask = async (text) => {
     try {
-      const res = await axios.post(`${API}/tasks`, { text }, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
-      setTasks(prev => [...prev, res.data]);
+      const res = await axios.post(
+        `${API}/tasks`,
+        { text },
+        {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        }
+      );
+      setTasks((prev) => [...prev, res.data]);
     } catch (err) {
       console.error("Add task error:", err);
     }
@@ -40,22 +48,29 @@ const Dashboard = () => {
   const deleteTask = async (id) => {
     try {
       await axios.delete(`${API}/tasks/${id}`, {
-        headers: { Authorization: `Bearer ${user?.token}` }
+        headers: { Authorization: `Bearer ${user?.token}` },
       });
-      setTasks(prev => prev.filter(task => task._id !== id));
+      setTasks((prev) => prev.filter((task) => task._id !== id));
     } catch (err) {
       console.error("Delete error:", err);
     }
   };
 
   const toggleTask = async (id) => {
-    const task = tasks.find(t => t._id === id);
-    const updated = { ...task, completed: !task.completed };
+    const task = tasks.find((t) => t._id === id);
+    if (!task) return;
+
     try {
-      await axios.put(`${API}/tasks/${id}`, updated, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
-      setTasks(prev => prev.map(t => t._id === id ? updated : t));
+      await axios.put(
+        `${API}/tasks/${id}`,
+        { completed: !task.completed },
+        {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        }
+      );
+      setTasks((prev) =>
+        prev.map((t) => (t._id === id ? { ...t, completed: !t.completed } : t))
+      );
     } catch (err) {
       console.error("Toggle error:", err);
     }

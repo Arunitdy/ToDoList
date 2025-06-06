@@ -14,7 +14,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${API}/login`, form);
+      // <-- Added missing slash after API
+      const res = await axios.post(`${API}/api/auth/login`, form);
       setUser(res.data);
       navigate("/");
     } catch (err) {
@@ -25,8 +26,18 @@ const Login = () => {
   return (
     <form onSubmit={handleSubmit}>
       <h2>Login</h2>
-      <input type="email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-      <input type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+      <input
+        type="email"
+        placeholder="Email"
+        value={form.email}
+        onChange={e => setForm({ ...form, email: e.target.value })}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={form.password}
+        onChange={e => setForm({ ...form, password: e.target.value })}
+      />
       <button type="submit">Login</button>
     </form>
   );
