@@ -5,7 +5,7 @@ import TodoList from "../components/TodoList";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 
-const API = import.meta.env.VITE_API_BASE_URL ||'/api';
+const API = import.meta.env.VITE_API_BASE_URL ||'http://localhost:5000';
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
