@@ -1,6 +1,6 @@
 import React from "react";
 import TodoItem from "./TodoItem";
-import "./css/TodoList.css";
+import "./css/todoList.css";
 
 const TodoList = ({ tasks = [], onDelete, onToggle, togglingIds = new Set() }) => {
   if (tasks.length === 0) {
