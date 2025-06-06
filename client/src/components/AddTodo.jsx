@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./css/AddTodo.css";
 
 const AddTodo = ({ onAdd }) => {
   const [text, setText] = useState("");
@@ -11,7 +12,7 @@ const AddTodo = ({ onAdd }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
+    <form className=" Addtodo" onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
       <input
         type="text"
         value={text}

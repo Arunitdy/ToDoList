@@ -4,24 +4,29 @@ import AddTodo from "../components/AddTodo";
 import TodoList from "../components/TodoList";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import "./css/Dashboard.css"; // Import the CSS file
 
-// Make sure your .env file has VITE_API_BASE_URL like:
-// VITE_API_BASE_URL=http://localhost:5000/api
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { user } = useAuth();
 
   const fetchTasks = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${API}/api/tasks`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setTasks(res.data);
+      setError(null);
     } catch (err) {
       console.error("Error fetching tasks:", err);
-      console.log(`path: ${API}/api/tasks`);
+      setError("Failed to load tasks. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,11 +85,25 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="dashboard-container">
       <Navbar />
-      <h2>Welcome, {user?.email}</h2>
-      <AddTodo onAdd={addTask} />
-      <TodoList tasks={tasks} onDelete={deleteTask} onToggle={toggleTask} />
+      <div className="dashboard-content">
+        <div className="dashboard-header">
+          <h1 className="dashboard-title">Task Manager</h1>
+          <p className="dashboard-subtitle">Welcome, {user?.email}</p>
+        </div>
+        
+        <AddTodo onAdd={addTask} />
+        
+        {loading && <p className="loading-message">Loading your tasks...</p>}
+        {error && <p className="error-message">{error}</p>}
+        {!loading && !error && tasks.length > 0 && (
+          <TodoList tasks={tasks} onDelete={deleteTask} onToggle={toggleTask} />
+        )}
+        {!loading && !error && tasks.length === 0 && (
+          <p className="loading-message">No tasks yet! Add one to get started.</p>
+        )}
+      </div>
     </div>
   );
 };

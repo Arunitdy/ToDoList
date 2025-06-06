@@ -1,0 +1,45 @@
+/* TodoList.css */
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem auto;
+  width: 90%;
+  max-width: 600px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.empty-message {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Animation for list appearance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .todo-list {
+    width: 95%;
+  }
+  
+  .empty-message {
+    font-size: 1rem;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+}

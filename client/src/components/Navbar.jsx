@@ -1,5 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import "./css/navbar.css"; 
 
 const Navbar = () => {
   const { user, setUser } = useAuth();

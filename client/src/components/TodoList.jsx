@@ -1,17 +1,17 @@
 import React from "react";
 import TodoItem from "./TodoItem";
+import "./css/todoList.css"; // Import the CSS file
 
 const TodoList = ({ tasks, onDelete, onToggle }) => {
-  console.log("TodoList tasks:", tasks);
   const [taskList, setTaskList] = React.useState(tasks || []);
+  
   if (taskList.length === 0) {
-    return <p>No tasks yet! Add one.</p>;
+    return <p className="empty-message">No tasks yet! Add one.</p>;
   }
 
   return (
-    <ul style={{ listStyle: "none", padding: 0 }}>
+    <ul className="todo-list">
       {taskList.map((task) => (
-        console.log(task),
         <TodoItem
           key={task._id}
           task={task}
