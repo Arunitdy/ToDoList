@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 
 // Make sure your .env file has VITE_API_BASE_URL like:
 // VITE_API_BASE_URL=http://localhost:5000/api
-const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -15,12 +15,13 @@ const Dashboard = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(`${API}/tasks`, {
+      const res = await axios.get(`${API}/api/tasks`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setTasks(res.data);
     } catch (err) {
       console.error("Error fetching tasks:", err);
+      console.log(`path: ${API}/api/tasks`);
     }
   };
 
@@ -33,7 +34,7 @@ const Dashboard = () => {
   const addTask = async (text) => {
     try {
       const res = await axios.post(
-        `${API}/tasks`,
+        `${API}/api/tasks`,
         { text },
         {
           headers: { Authorization: `Bearer ${user?.token}` },
@@ -42,12 +43,14 @@ const Dashboard = () => {
       setTasks((prev) => [...prev, res.data]);
     } catch (err) {
       console.error("Add task error:", err);
+    } finally {
+        console.log(`path: ${API}/api/tasks`);
     }
   };
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`${API}/tasks/${id}`, {
+      await axios.delete(`${API}/api/tasks/${id}`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setTasks((prev) => prev.filter((task) => task._id !== id));
@@ -62,7 +65,7 @@ const Dashboard = () => {
 
     try {
       await axios.put(
-        `${API}/tasks/${id}`,
+        `${API}/api/tasks/${id}`,
         { completed: !task.completed },
         {
           headers: { Authorization: `Bearer ${user?.token}` },
