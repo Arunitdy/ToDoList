@@ -1,19 +1,25 @@
-import { useState } from "react";
-import React  from "react";
-import "./css/TodoItem.css"; 
+import React from "react";
+import "./css/TodoItem.css";
 
 const TodoItem = ({ task, onDelete, onToggle }) => {
-  const [taskList, setTaskList] = useState(task || {});
+  // Remove local state and use the task prop directly
   return (
     <li className="todo-item">
       <span 
-        className={`todo-text ${taskList.completed ? 'completed' : ''}`}
-        onClick={() => onToggle(taskList._id)}
+        className={`todo-text ${task.completed ? 'completed' : ''}`}
+        onClick={() => onToggle(task._id)}
       >
-        {taskList.text}
+        {task.text}
       </span>
-      <button className="delete-btn" onClick={() => onDelete(taskList._id)}>❌</button>
+      <button 
+        className="delete-btn" 
+        onClick={() => onDelete(task._id)}
+        aria-label="Delete task"
+      >
+        ❌
+      </button>
     </li>
   );
 };
+
 export default TodoItem;
