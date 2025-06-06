@@ -7,16 +7,30 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Runtime & Dependency folders
 node_modules
 dist
 dist-ssr
-*.local
+build
+.cache
+.next
+out
 
-# Editor directories and files
+# Local environment variables
+.env
+.env.*
+
+# Vercel/Render project config
+.vercel
+render.yaml
+
+# Local OS files
+.DS_Store
+
+# Editor config
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
