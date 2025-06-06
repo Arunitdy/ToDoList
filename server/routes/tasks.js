@@ -1,40 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
+const auth = require('../middleware/auth');
 
-// GET all tasks
-router.get('/', async (req, res) => {
-  const tasks = await Task.find();
+// GET tasks for logged-in user
+router.get('/', auth, async (req, res) => {
+  const tasks = await Task.find({ user: req.user.userId });
   res.json(tasks);
 });
 
 // POST a new task
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
-    const newTask = new Task({ text: req.body.text }); // fix here
+    const newTask = new Task({
+      text: req.body.text,
+      user: req.user.userId
+    });
     const savedTask = await newTask.save();
     res.status(201).json(savedTask);
   } catch (err) {
-    console.error("Error saving task:", err.message);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Error creating task" });
   }
 });
 
-
-// PUT (update) a task
-router.put('/:id', async (req, res) => {
-  const updatedTask = await Task.findByIdAndUpdate(
-    req.params.id,
+// PUT task
+router.put('/:id', auth, async (req, res) => {
+  const task = await Task.findOneAndUpdate(
+    { _id: req.params.id, user: req.user.userId },
     { completed: req.body.completed },
     { new: true }
   );
-  res.json(updatedTask);
+  res.json(task);
 });
 
-// DELETE a task
-router.delete('/:id', async (req, res) => {
-  const deletedTask = await Task.findByIdAndDelete(req.params.id);
-  res.json(deletedTask);
+// DELETE task
+router.delete('/:id', auth, async (req, res) => {
+  const deleted = await Task.findOneAndDelete({ _id: req.params.id, user: req.user.userId });
+  res.json(deleted);
 });
 
 module.exports = router;
