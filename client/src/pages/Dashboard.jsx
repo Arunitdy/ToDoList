@@ -4,7 +4,7 @@ import AddTodo from "../components/AddTodo";
 import TodoList from "../components/TodoList";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
-import "./css/Dashboard.css"; // Import the CSS file
+import "./css/Dashboard.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
@@ -12,12 +12,13 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [togglingIds, setTogglingIds] = useState(new Set());
   const { user } = useAuth();
 
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API}/api/tasks`, {
+      const res = await axios.get(`${API}/api/tasks?timestamp=${Date.now()}`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setTasks(res.data);
@@ -41,15 +42,11 @@ const Dashboard = () => {
       const res = await axios.post(
         `${API}/api/tasks`,
         { text },
-        {
-          headers: { Authorization: `Bearer ${user?.token}` },
-        }
+        { headers: { Authorization: `Bearer ${user?.token}` } }
       );
       setTasks((prev) => [...prev, res.data]);
     } catch (err) {
       console.error("Add task error:", err);
-    } finally {
-        console.log(`path: ${API}/api/tasks`);
     }
   };
 
@@ -65,22 +62,39 @@ const Dashboard = () => {
   };
 
   const toggleTask = async (id) => {
-    const task = tasks.find((t) => t._id === id);
-    if (!task) return;
-
     try {
-      await axios.put(
+      setTogglingIds(prev => new Set(prev).add(id));
+      
+      const task = tasks.find(t => t._id === id);
+      const newCompletedStatus = !task.completed;
+      
+      // Optimistic update
+      setTasks(prev => prev.map(t => 
+        t._id === id ? { ...t, completed: newCompletedStatus } : t
+      ));
+      
+      const response = await axios.put(
         `${API}/api/tasks/${id}`,
-        { completed: !task.completed },
-        {
-          headers: { Authorization: `Bearer ${user?.token}` },
-        }
+        { completed: newCompletedStatus },
+        { headers: { Authorization: `Bearer ${user?.token}` } }
       );
-      setTasks((prev) =>
-        prev.map((t) => (t._id === id ? { ...t, completed: !t.completed } : t))
-      );
+      
+      // Sync with server response
+      setTasks(prev => prev.map(t => 
+        t._id === id ? response.data : t
+      ));
     } catch (err) {
+      // Revert on error
+      setTasks(prev => prev.map(t => 
+        t._id === id ? { ...t, completed: !t.completed } : t
+      ));
       console.error("Toggle error:", err);
+    } finally {
+      setTogglingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     }
   };
 
@@ -97,11 +111,13 @@ const Dashboard = () => {
         
         {loading && <p className="loading-message">Loading your tasks...</p>}
         {error && <p className="error-message">{error}</p>}
-        {!loading && !error && tasks.length > 0 && (
-          <TodoList tasks={tasks} onDelete={deleteTask} onToggle={toggleTask} />
-        )}
-        {!loading && !error && tasks.length === 0 && (
-          <p className="loading-message">No tasks yet! Add one to get started.</p>
+        {!loading && !error && (
+          <TodoList 
+            tasks={tasks} 
+            onDelete={deleteTask} 
+            onToggle={toggleTask}
+            togglingIds={togglingIds}
+          />
         )}
       </div>
     </div>

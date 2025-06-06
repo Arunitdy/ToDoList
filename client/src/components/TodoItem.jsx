@@ -1,12 +1,11 @@
 import React from "react";
 import "./css/TodoItem.css";
 
-const TodoItem = ({ task, onDelete, onToggle }) => {
-  // Remove local state and use the task prop directly
+const TodoItem = ({ task, onDelete, onToggle, isToggling }) => {
   return (
     <li className="todo-item">
       <span 
-        className={`todo-text ${task.completed ? 'completed' : ''}`}
+        className={`todo-text ${task.completed ? 'completed' : ''} ${isToggling ? 'updating' : ''}`}
         onClick={() => onToggle(task._id)}
       >
         {task.text}
